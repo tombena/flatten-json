@@ -1,4 +1,4 @@
-import json, os, io
+import json, os, io, fcntl
 from pprint import pprint
 from pathlib import Path
 
@@ -14,25 +14,35 @@ def write_to_file(filename, d):
 
 	# file doesn't exist
 	if not my_file.is_file():
-		output = open(filename, 'w')
+		f = open(filename, 'w')
+
+		fcntl.flock(f, fcntl.LOCK_EX)
+
 	else:
-		# read file
-		input = open(filename, 'r')
+
+		f = open(filename, 'r+')
+		fcntl.flock(f, fcntl.LOCK_EX)
 
 		# convert content back to JSON
-		data = json.load(input)
-		input.close()
+		data = json.load(f)
 
-		# append both JSON blocks in correct order
-		# (from oldest to most recent)
-		dicts.append(data)
+		for i in range(len(data)):
+			# append all JSON blocks in correct order
+			# (from oldest to most recent)
+			dicts.append(data[i])
 
-		output = open(filename, 'w')
+		# go back to beginning of file
+		f.seek(0)
+
 
 	dicts.append(d)
 		
-	json.dump(dicts, output)
-	output.close()
+	json.dump(dicts, f)
+
+	fcntl.flock(f, fcntl.LOCK_UN)
+
+	f.close()
+
 
 	return
 
@@ -43,9 +53,9 @@ def write_to_file(filename, d):
 # depth + 1: number of times this function was called
 # j_ids: dict of JSON ids
 def flatten(obj, parent_name, key, depth, j_ids):
-	print("depth = " + str(depth))
-	print("key = " + key)
-	print("parent_name = " + parent_name)
+	# print("depth = " + str(depth))
+	# print("key = " + key)
+	# print("parent_name = " + parent_name)
 
 	# depth has to be smaller than 5
 	if (depth > 5):
@@ -60,24 +70,24 @@ def flatten(obj, parent_name, key, depth, j_ids):
 	d = {**d, **j_ids}
 
 	# print(obj)
-	print(type(obj))
+	# print(type(obj))
 
 	# if type(obj) == dict and len(obj) == 1:
 	# 	elem = obj
 
+	elem = obj
 	if len(obj) == 1:
 		try:
 			elem = obj[key][0]
 		except KeyError:
-			print(obj)
-	else:
-		elem = obj
+			print(" ")
+
 
 	# for each field in dictionary
 	for key, value in elem.items():
 		if type(value) == dict:
-			print(value)
-			print("len = " + str(len(value)))
+			# print(value)
+			# print("len = " + str(len(value)))
 			flatten(value, parent_name + "_" + key, key, depth + 1, j_ids)
 		elif type(value) == list:
 			# need to iterate through the list
@@ -86,20 +96,12 @@ def flatten(obj, parent_name, key, depth, j_ids):
 				# key is plural therefore the last 's' should be removed
 				# (considering plural of name doesn't become "-es" e.g. baby -> babies)
 
-				# print(value[i])
-
-
-				# if type(value[i]) != dict or type(value[i]) != list:
-				# 	d[key] = value[i]
-				# 	break
-
-				# print(value[i])
 				flatten(value[i], parent_name + "_" + key[:-1], key, depth + 1, j_ids)
 		else:
 			d[key] = value
 
-	print(parent_name + " of depth " + str(depth) + ":")
-	print(d)
+	# print(parent_name + " of depth " + str(depth) + ":")
+	# print(d)
 
 	write_to_file('output/' + parent_name + '.json', d)
 
@@ -107,7 +109,7 @@ def flatten(obj, parent_name, key, depth, j_ids):
 
 # input files are in input/ folder
 for file in os.listdir("input/"):
-	if file.endswith("restaurants.json"):
+	if file.endswith("donuts.json"):
 		# for every file in input/ folder
 		input = open("input/" + file, 'r')
 
@@ -116,7 +118,7 @@ for file in os.listdir("input/"):
 
 		# remove ".json" (5 char long) from filename
 		parent_name = file[:-5];
-		print(parent_name)
+		# print(parent_name)
 
 		j_ids = {"id": data[parent_name][0]["id"]}
 		# print(j_ids)
