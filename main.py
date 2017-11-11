@@ -25,7 +25,7 @@ def write_to_file(filename, d):
 
 		# append both JSON blocks in correct order
 		# (from oldest to most recent)
-		dicts.append(data)
+		dicts.append(data[0])
 
 		output = open(filename, 'w')
 
@@ -65,13 +65,13 @@ def flatten(obj, parent_name, key, depth, j_ids):
 	# if type(obj) == dict and len(obj) == 1:
 	# 	elem = obj
 
+	elem = obj
 	if len(obj) == 1:
 		try:
 			elem = obj[key][0]
 		except KeyError:
 			print(obj)
-	else:
-		elem = obj
+
 
 	# for each field in dictionary
 	for key, value in elem.items():
