@@ -1,9 +1,10 @@
 # flatten-json
 
 Given a deeply nested JSON object, flattens out the JSON and splits it up into individual JSON objects with one level of nesting. The child objects generated from the JSON are such that the original JSON can be reconstructed.
-e.g. The JSON listed below has three levels of nesting. Once the code processes it, it generates multiple objects with a single level of nesting. In this case, four different types of child objects would be generated. The sample output is listed on the next page.
+e.g. The JSON listed below has three levels of nesting. Once the code processes it, it generates multiple objects with a single level of nesting. In this case, four different types of child objects would be generated. The sample output is below.
 
 # Input
+```
    {
     "restaurants": [{
         "id": "58b868503c6f4d322fa8f552",
@@ -34,9 +35,11 @@ e.g. The JSON listed below has three levels of nesting. Once the code processes 
         "name": "Morris Park Bake Shop"
     }]
 }
- 
+```
+
 # Output
 restaurant (Top-level object)
+```
 [
   {
     "id": "58b868503c6f4d322fa8f552",
@@ -45,8 +48,10 @@ restaurant (Top-level object)
     "name": "Morris Park Bake Shop"
   } 
 ]
+```
 
 restaurant_address
+```
 [ 
   {
     "id": "58b868503c6f4d322fa8f552",
@@ -56,8 +61,10 @@ restaurant_address
     "zipcode": "10462"
   }
 ]
+```
 
 restaurant_grade
+```
 [
   {
     "id": "58b868503c6f4d322fa8f552",
@@ -72,9 +79,10 @@ restaurant_grade
     "grade": "A"
   },
 ]
+```
     
- 
 restaurant_grade_score
+```
 [
   {
     "id": "58b868503c6f4d322fa8f552",
@@ -89,6 +97,7 @@ restaurant_grade_score
     "y": "22"
   },
 ]
+```
 
 Note that the top-level fields which are primitive data types form one object and each nested JSON or array becomes a new object. This transformation is recursively done until all the nesting is eliminated.
 
