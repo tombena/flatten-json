@@ -28,9 +28,7 @@ def write_to_file(filename, d):
 	if not my_file.is_file():
 		f = open(filename, 'w')
 		fcntl.flock(f, fcntl.LOCK_EX)
-
 	else:
-
 		f = open(filename, 'r+')
 		fcntl.flock(f, fcntl.LOCK_EX)
 
@@ -84,12 +82,8 @@ def flatten(obj, parent_name, key, depth, j_ids):
 	# for each field in dictionary
 	for key, value in elem.items():
 		if type(value) == dict:
-			# print(value)
-			# print("len = " + str(len(value)))
 			flatten(value, parent_name + "_" + key, key, depth + 1, j_ids.copy())
 		elif type(value) == list:
-			# print(value)
-
 			if len(value) == 0:
 				d[key] = value
 			elif type(value[0]) != dict:
