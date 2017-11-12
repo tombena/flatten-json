@@ -15,7 +15,6 @@ def write_to_file(filename, d):
 	# file doesn't exist
 	if not my_file.is_file():
 		f = open(filename, 'w')
-
 		fcntl.flock(f, fcntl.LOCK_EX)
 
 	else:
@@ -42,7 +41,6 @@ def write_to_file(filename, d):
 
 	f.close()
 
-
 	return
 
 # recursively flatten JSON block
@@ -65,8 +63,7 @@ def flatten(obj, parent_name, key, depth, j_ids):
 	# create dictionary
 	d = {}
 
-	# set JSON id fields (there can be multiple of them)
-	d = {**d, **j_ids}
+
 
 	# print(obj)
 	# print(type(obj))
@@ -100,6 +97,12 @@ def flatten(obj, parent_name, key, depth, j_ids):
 
 	# print(parent_name + " of depth " + str(depth) + ":")
 	# print(d)
+
+	if len(d) == 0:
+		return
+
+	# set JSON id fields (there can be multiple of them)
+	d = {**d, **j_ids}
 
 	write_to_file('output/' + parent_name + '.json', d)
 
