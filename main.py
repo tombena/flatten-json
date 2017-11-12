@@ -34,9 +34,8 @@ def write_to_file(filename, d):
 		# go back to beginning of file
 		f.seek(0)
 
-
 	dicts.append(d)
-		
+
 	json.dump(dicts, f)
 
 	fcntl.flock(f, fcntl.LOCK_UN)
@@ -81,7 +80,6 @@ def flatten(obj, parent_name, key, depth, j_ids):
 			elem = obj[key][0]
 		except KeyError:
 			print(" ")
-
 
 	# for each field in dictionary
 	for key, value in elem.items():
